@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import roomescape.auth.web.exception.NotAuthorizationException;
 import roomescape.auth.web.interceptor.AdminMemberHandlerInterceptor;
 import roomescape.auth.web.resolver.AuthenticatedMemberArgumentResolver;
 import roomescape.config.WebMvcTestConfig;
@@ -107,5 +108,36 @@ class WaitingApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reserveByUserRequest)))
                 .andExpect(status().isConflict());
+    }
+
+    @Test
+    void 인증_실패시_401_상태_코드를_반환한다() throws Exception {
+        // given
+        ReserveByUserRequest reserveByUserRequest = new ReserveByUserRequest(LocalDate.now(), 1L, 1L);
+
+        // 인증 실패 상황 시뮬레이션 (ArgumentResolver가 예외를 던지도록)
+        given(authenticatedMemberArgumentResolver.supportsParameter(any())).willReturn(true);
+        given(authenticatedMemberArgumentResolver.resolveArgument(any(), any(), any(), any()))
+                .willThrow(new NotAuthorizationException("인증 실패"));
+
+        // when & then
+        mockMvc.perform(post("/reservations/waiting")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(reserveByUserRequest)))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void 잘못된_입력값이면_400_상태_코드와_에러코드를_반환한다() throws Exception {
+        // given: date가 null인 경우
+        ReserveByUserRequest reserveByUserRequest = new ReserveByUserRequest(null, 1L, 1L);
+
+        // when & then
+        mockMvc.perform(post("/reservations/waiting")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(reserveByUserRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("GF002"))
+                .andExpect(jsonPath("$.message").value("잘못된 인자입니다."));
     }
 }
