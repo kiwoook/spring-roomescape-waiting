@@ -41,7 +41,7 @@ class ReservationRepositoryTest {
         Reservation waiting1 = reservationRepository.save(Reservation.waiting(유저1, 내일_열시, 공포));
         Reservation waiting2 = reservationRepository.save(Reservation.waiting(유저2, 내일_열시, 공포));
 
-        List<Reservation> result = reservationRepository.findByStatus(ReservationStatus.WAITING);
+        List<Reservation> result = reservationRepository.findByStatusOrderById(ReservationStatus.WAITING);
 
         // then
         SoftAssertions.assertSoftly(softly -> {

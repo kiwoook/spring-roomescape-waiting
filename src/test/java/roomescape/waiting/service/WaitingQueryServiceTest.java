@@ -3,6 +3,7 @@ package roomescape.waiting.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,28 +51,31 @@ class WaitingQueryServiceTest {
     }
 
     @Test
-    void 대기_예약_목록을_모두_조회한다() {
+    void 대기_예약_목록을_ID순으로_모두_조회한다() {
         // given
         Member 유저1 = memberDbFixture.유저1_생성();
         Member 유저2 = memberDbFixture.유저2_생성();
         Theme 공포 = themeDbFixture.공포();
         ReservationDateTime 내일_열시 = reservationDateTimeDbFixture.내일_열시();
+        ReservationDateTime 내일_열한시 = reservationDateTimeDbFixture.내일_열한시();
 
         reservationRepository.save(Reservation.waiting(유저1, 내일_열시, 공포));
         reservationRepository.save(Reservation.waiting(유저2, 내일_열시, 공포));
+        reservationRepository.save(Reservation.waiting(유저1, 내일_열한시, 공포));
 
         // when
         Page<WaitingInfoResponse> result = waitingQueryService.getAllInfo(pageable);
 
         List<WaitingInfoResponse> content = result.getContent();
+        List<Long> sortedId = content.stream().sorted(Comparator.comparing(WaitingInfoResponse::id))
+                .map(WaitingInfoResponse::id).toList();
+
         // then
         SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(content).hasSize(2);
-            softly.assertThat(content.get(0).theme()).isEqualTo(공포.getName());
-            softly.assertThat(content.get(1).theme()).isEqualTo(공포.getName());
-            softly.assertThat(content)
-                    .extracting(WaitingInfoResponse::name)
-                    .containsExactlyInAnyOrder(유저1.getName(), 유저2.getName());
+            softly.assertThat(content).hasSize(3);
+            softly.assertThat(sortedId).isEqualTo(content.stream().map(WaitingInfoResponse::id).toList());
+            softly.assertThat(content).extracting(WaitingInfoResponse::name)
+                    .containsExactlyInAnyOrder(유저1.getName(), 유저2.getName(), 유저1.getName());
         });
     }
 
@@ -111,5 +115,21 @@ class WaitingQueryServiceTest {
         boolean result = waitingQueryService.existWaiting(유저1.getId(), date, timeId);
 
         assertThat(result).isTrue();
+    }
+
+    @Test
+    void 예약_대기가_존재하지_않으면_false를_반환한다() {
+        // given
+        Member 유저1 = memberDbFixture.유저1_생성();
+        Theme 공포 = themeDbFixture.공포();
+        ReservationDateTime 내일_열시 = reservationDateTimeDbFixture.내일_열시();
+        LocalDate date = 내일_열시.getDate();
+        Long timeId = 내일_열시.getTimeId();
+
+        // when
+        boolean result = waitingQueryService.existWaiting(유저1.getId(), date, timeId);
+
+        // then
+        assertThat(result).isFalse();
     }
 }

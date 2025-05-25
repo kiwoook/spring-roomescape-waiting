@@ -41,7 +41,7 @@ public class ReservedQueryService {
     }
 
     private Page<ReservationResponse> getAllReserved(Pageable pageable) {
-        Page<Reservation> reservations = reservationRepository.findByStatus(RESERVED, pageable);
+        Page<Reservation> reservations = reservationRepository.findByStatusOrderById(RESERVED, pageable);
 
         return reservations.map(ReservationResponse::from);
     }

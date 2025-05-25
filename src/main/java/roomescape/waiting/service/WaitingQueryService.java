@@ -25,7 +25,7 @@ public class WaitingQueryService {
     private final ReservationRepository reservationRepository;
 
     public Page<WaitingInfoResponse> getAllInfo(Pageable pageable) {
-        return reservationRepository.findByStatus(WAITING, pageable)
+        return reservationRepository.findByStatusOrderById(WAITING, pageable)
                 .map(WaitingInfoResponse::from);
     }
 

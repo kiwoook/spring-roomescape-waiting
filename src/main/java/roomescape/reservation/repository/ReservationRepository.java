@@ -29,24 +29,20 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             where r.theme.id = :themeId
             and r.reservationDateTime.reservationDate.date between :from and :to
             """)
-    long countReservationByThemeIdAndDuration(
-            @Param("from") LocalDate from,
-            @Param("to") LocalDate to,
-            @Param("themeId") Long themeId
-    );
+    long countReservationByThemeIdAndDuration(@Param("from") LocalDate from, @Param("to") LocalDate to,
+                                              @Param("themeId") Long themeId);
 
     @Query("""
             select r.reservationDateTime.reservationTime.id
             from Reservation r
             where r.reservationDateTime.reservationDate.date = :date and r.theme.id = :themeId
             """)
-    List<Long> findReservedTimeIdsByDateAndTheme(@Param("date") LocalDate date,
-                                                 @Param("themeId") Long themeId);
+    List<Long> findReservedTimeIdsByDateAndTheme(@Param("date") LocalDate date, @Param("themeId") Long themeId);
 
 
-    Page<Reservation> findByStatus(ReservationStatus status, Pageable pageable);
+    Page<Reservation> findByStatusOrderById(ReservationStatus status, Pageable pageable);
 
-    List<Reservation> findByStatus(ReservationStatus status);
+    List<Reservation> findByStatusOrderById(ReservationStatus status);
 
     Optional<Reservation> findByIdAndStatus(Long id, ReservationStatus status);
 
@@ -63,8 +59,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             """)
     Page<Reservation> findFilteredReservations(@Param("themeId") Long themeId, @Param("memberId") Long memberId,
                                                @Param("fromDate") LocalDate fromDate, @Param("toDate") LocalDate toDate,
-                                               @Param("status") ReservationStatus status, Pageable pageable
-    );
+                                               @Param("status") ReservationStatus status, Pageable pageable);
 
     @Query("""
             select r
@@ -87,11 +82,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                 and r.status = :status
             )
             """)
-    boolean existsByMemberIdAndDateAndTimeIdAndStatus(@Param("memberId") Long memberId,
-                                                      @Param("date") LocalDate date,
+    boolean existsByMemberIdAndDateAndTimeIdAndStatus(@Param("memberId") Long memberId, @Param("date") LocalDate date,
                                                       @Param("timeId") Long timeId,
-                                                      @Param("status") ReservationStatus status
-    );
+                                                      @Param("status") ReservationStatus status);
 
     @Query("""
             select exists
@@ -100,8 +93,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                 and r.reservationDateTime.reservationTime.id = :timeId
                 and r.status = :status)
             """)
-    boolean existsByDateAndTimeIdAndStatus(@Param("date") LocalDate date,
-                                           @Param("timeId") Long timeId,
+    boolean existsByDateAndTimeIdAndStatus(@Param("date") LocalDate date, @Param("timeId") Long timeId,
                                            @Param("status") ReservationStatus status);
 
     @Query("""
@@ -114,8 +106,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
               and t.id = :timeId
               and r.status = :status
             """)
-    List<Reservation> findByDateAndTimeIdAndStatus(@Param("date") LocalDate date,
-                                                   @Param("timeId") Long timeId,
-                                                   @Param("status") ReservationStatus status
-    );
+    List<Reservation> findByDateAndTimeIdAndStatus(@Param("date") LocalDate date, @Param("timeId") Long timeId,
+                                                   @Param("status") ReservationStatus status);
 }
