@@ -63,7 +63,14 @@ public class WaitingQueryService {
     }
 
     public Reservation getFirstByDateAndTimeId(LocalDate date, Long timeId) {
-        return reservationRepository.findByDateAndTimeIdAndStatus(date, timeId, WAITING).getFirst();
+        List<Reservation> reservations = reservationRepository.findByDateAndTimeIdAndStatus(date, timeId,
+                WAITING);
+
+        if (reservations.isEmpty()) {
+            throw new NotFoundException("해당 날짜와 시간에 대한 예약 대기가 없습니다.");
+        }
+
+        return reservations.getFirst();
     }
 
     public boolean existWaiting(Long userId, LocalDate date, Long timeId) {
