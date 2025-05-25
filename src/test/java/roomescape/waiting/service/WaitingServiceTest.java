@@ -67,7 +67,7 @@ class WaitingServiceTest {
     }
 
     @Test
-    void 본인의_대기_예약을_삭제한다() {
+    void 본인의_대기_예약을_취소한다() {
         // given
         Member 유저1 = memberDbFixture.유저1_생성();
         Theme 공포 = themeDbFixture.공포();
@@ -80,7 +80,7 @@ class WaitingServiceTest {
 
         // then
         assertThat(reservationRepository.findById(savedWaiting.getId()).get().getStatus()).isEqualTo(
-                ReservationStatus.CANCELED_WAITING);
+                ReservationStatus.CANCELED);
     }
 
     @Test

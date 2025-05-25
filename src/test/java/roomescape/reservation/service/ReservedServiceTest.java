@@ -57,7 +57,7 @@ class ReservedServiceTest {
 
         // then
         assertThat(reservationRepository.findById(reservation.getId()).get().getStatus()).isEqualTo(
-                ReservationStatus.CANCELED_RESERVATION);
+                ReservationStatus.CANCELED);
     }
 
     @Test

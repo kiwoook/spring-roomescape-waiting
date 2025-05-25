@@ -9,7 +9,5 @@ public enum ReservationStatus {
 
     RESERVED,
     WAITING,
-    CANCELED_RESERVATION,
-    CANCELED_WAITING
-    ;
+    CANCELED,
 }

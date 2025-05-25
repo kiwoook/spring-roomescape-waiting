@@ -87,7 +87,7 @@ public class Reservation {
             throw new InvalidStatusTransitionException("예약이 되어 있지 않습니다.");
         }
 
-        status = ReservationStatus.CANCELED_RESERVATION;
+        status = ReservationStatus.CANCELED;
     }
 
     public void cancelWaiting() {
@@ -95,7 +95,7 @@ public class Reservation {
             throw new InvalidStatusTransitionException("대기 예약이 되어 있지 않습니다.");
         }
 
-        status = ReservationStatus.CANCELED_WAITING;
+        status = ReservationStatus.CANCELED;
     }
 
     public String getReserverName() {
