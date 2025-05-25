@@ -10,6 +10,7 @@ import roomescape.member.service.MemberQueryService;
 import roomescape.reservation.domain.Reservation;
 import roomescape.reservation.domain.ReservationDate;
 import roomescape.reservation.domain.ReservationDateTime;
+import roomescape.reservation.domain.ReservationStatus;
 import roomescape.reservation.repository.ReservationRepository;
 import roomescape.reservation.service.command.ReserveCommand;
 import roomescape.theme.domain.Theme;
@@ -43,7 +44,7 @@ public class ReservationManager {
     }
 
     private void isAlreadyReservedTime(LocalDate date, Long timeId) {
-        if (reservationRepository.existsByDateAndTimeId(date, timeId)) {
+        if (reservationRepository.existsByDateAndTimeIdAndStatus(date, timeId, ReservationStatus.RESERVED)) {
             throw new InvalidArgumentException("이미 예약이 존재하는 시간입니다.");
         }
     }

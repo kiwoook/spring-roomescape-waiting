@@ -16,13 +16,6 @@ import roomescape.reservation.domain.ReservationStatus;
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
     @Query("""
-            select exists
-                (select r from Reservation r
-                where r.reservationDateTime.reservationDate.date = :date and r.reservationDateTime.reservationTime.id = :timeId)
-            """)
-    boolean existsByDateAndTimeId(@Param("date") LocalDate date, @Param("timeId") Long timeId);
-
-    @Query("""
              select exists
                 (select r from Reservation r
                 where r.reservationDateTime.reservationTime.id = :timeId)
