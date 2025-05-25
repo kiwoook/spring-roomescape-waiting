@@ -27,7 +27,7 @@ public class ReservationService {
 
     @Transactional
     public ReservationResponse reserve(ReserveCommand reserveCommand) {
-        Reservation reserved = reservationManager.reserve(reserveCommand);
+        Reservation reserved = reservationManager.reserved(reserveCommand);
 
         return ReservationResponse.from(reserved);
     }

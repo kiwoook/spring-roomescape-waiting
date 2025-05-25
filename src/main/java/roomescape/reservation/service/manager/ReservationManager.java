@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import roomescape.global.exception.InvalidArgumentException;
+import roomescape.global.function.TriFunction;
 import roomescape.member.domain.Member;
 import roomescape.member.service.MemberQueryService;
 import roomescape.reservation.domain.Reservation;
@@ -27,20 +28,11 @@ public class ReservationManager {
     private final ReservationRepository reservationRepository;
 
     @Transactional
-    public Reservation reserve(ReserveCommand reserveCommand) {
+    public Reservation reserved(ReserveCommand reserveCommand) {
         isAlreadyReservedTime(reserveCommand.date(), reserveCommand.timeId());
-        Reservation reserve = reservationFrom(reserveCommand);
+        Reservation reserved = reservationFrom(reserveCommand, Reservation::reserve);
 
-        return reservationRepository.save(reserve);
-    }
-
-    private Reservation reservationFrom(ReserveCommand reserveCommand) {
-        Theme theme = themeQueryService.getTheme(reserveCommand.themeId());
-        Member member = memberQueryService.getMember(reserveCommand.memberId());
-        ReservationDateTime reservationDateTime = ReservationDateTime.create(new ReservationDate(reserveCommand.date()),
-                reservationTimeQueryService.getReservationTime(reserveCommand.timeId()));
-
-        return Reservation.reserve(member, reservationDateTime, theme);
+        return reservationRepository.save(reserved);
     }
 
     private void isAlreadyReservedTime(LocalDate date, Long timeId) {
@@ -51,14 +43,19 @@ public class ReservationManager {
 
     @Transactional
     public Reservation waiting(ReserveCommand reserveCommand) {
-        Theme theme = themeQueryService.getTheme(reserveCommand.themeId());
+        Reservation waiting = reservationFrom(reserveCommand, Reservation::waiting);
+
+        return reservationRepository.save(waiting);
+    }
+
+    private Reservation reservationFrom(ReserveCommand reserveCommand,
+                                        TriFunction<Member, ReservationDateTime, Theme, Reservation> reservationFunction) {
         Member member = memberQueryService.getMember(reserveCommand.memberId());
         ReservationDateTime reservationDateTime = ReservationDateTime.create(new ReservationDate(reserveCommand.date()),
                 reservationTimeQueryService.getReservationTime(reserveCommand.timeId()));
+        Theme theme = themeQueryService.getTheme(reserveCommand.themeId());
 
-        Reservation waiting = Reservation.waiting(member, reservationDateTime, theme);
-
-        return reservationRepository.save(waiting);
+        return reservationFunction.apply(member, reservationDateTime, theme);
     }
 
     public void delete(Reservation reservation) {
