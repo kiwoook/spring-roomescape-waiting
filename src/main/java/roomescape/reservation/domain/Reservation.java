@@ -71,7 +71,7 @@ public class Reservation {
     }
 
     public boolean isOwner(Long userId) {
-        return reserver.getId().equals(userId);
+        return reserver.isOwner(userId);
     }
 
     public void reserved() {

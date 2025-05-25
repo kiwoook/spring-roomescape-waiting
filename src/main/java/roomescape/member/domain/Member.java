@@ -74,4 +74,8 @@ public class Member {
             throw new InvalidArgumentException("이메일 형식이 아닙니다.");
         }
     }
+
+    public boolean isOwner(Long userId) {
+        return id != null && id.equals(userId);
+    }
 }
