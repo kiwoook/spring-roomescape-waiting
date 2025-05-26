@@ -74,9 +74,9 @@ public class Reservation {
         return reserver.isOwner(userId);
     }
 
-    public void reserved() {
+    public void changeReserved() {
         if (status != ReservationStatus.WAITING) {
-            throw new InvalidStatusTransitionException("예약할 수 없는 상태입니다.");
+            throw new InvalidStatusTransitionException("대기 상태에서만 예약으로 변경할 수 있습니다.");
         }
 
         status = ReservationStatus.RESERVED;

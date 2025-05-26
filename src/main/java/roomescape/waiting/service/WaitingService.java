@@ -19,7 +19,7 @@ public class WaitingService {
     public void promoteFirstWaitingToReservation(LocalDate date, Long timeId) {
         if (waitingQueryService.existsByDateAndTimeId(date, timeId)) {
             Reservation waiting = waitingQueryService.getFirstByDateAndTimeId(date, timeId);
-            waiting.reserved();
+            waiting.changeReserved();
         }
     }
 

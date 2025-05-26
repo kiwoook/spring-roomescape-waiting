@@ -21,7 +21,7 @@ public class ReservationTest {
     void 대기상태에서_예약상태로_전환된다() {
         Reservation reservation = Reservation.waiting(member, reservationDateTime, theme);
 
-        assertThatCode(reservation::reserved)
+        assertThatCode(reservation::changeReserved)
                 .doesNotThrowAnyException();
     }
 
@@ -29,7 +29,7 @@ public class ReservationTest {
     void 대기상태가_아니면_예약상태로_전환시_예외가_발생한다() {
         Reservation reservation = Reservation.reserve(member, reservationDateTime, theme);
 
-        assertThatThrownBy(reservation::reserved)
+        assertThatThrownBy(reservation::changeReserved)
                 .isInstanceOf(InvalidStatusTransitionException.class);
     }
 
