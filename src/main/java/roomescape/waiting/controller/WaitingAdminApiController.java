@@ -26,15 +26,15 @@ public class WaitingAdminApiController {
     private final WaitingQueryService waitingQueryService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<WaitingInfoResponse>>> readAll(Pageable pageable) {
-        Page<WaitingInfoResponse> responses = waitingQueryService.getAllInfo(pageable);
+    public ResponseEntity<ApiResponse<PageResponse<WaitingInfoResponse>>> getWaitings(Pageable pageable) {
+        Page<WaitingInfoResponse> responses = waitingQueryService.getAll(pageable);
 
         PageResponse<WaitingInfoResponse> pageResponse = PageResponse.from(responses);
         return ResponseEntity.ok(ApiResponse.success(READ_WAITING_SUCCESS_CODE, pageResponse));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteWaiting(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteWaiting(@PathVariable Long id) {
         waitingService.delete(id);
 
         return ResponseEntity.noContent().build();

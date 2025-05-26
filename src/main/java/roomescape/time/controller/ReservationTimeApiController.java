@@ -53,7 +53,7 @@ public class ReservationTimeApiController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteTime(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTime(@PathVariable Long id) {
         reservationTimeService.deleteById(id);
 
         return ResponseEntity.noContent().build();

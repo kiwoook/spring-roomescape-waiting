@@ -43,7 +43,7 @@ public class WaitingApiController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> cancelWaiting(
+    public ResponseEntity<Void> cancelWaiting(
             @PathVariable Long id,
             @Authenticated Long memberId
     ) {

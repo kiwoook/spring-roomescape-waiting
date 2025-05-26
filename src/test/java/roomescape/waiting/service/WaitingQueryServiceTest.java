@@ -64,7 +64,7 @@ class WaitingQueryServiceTest {
         reservationRepository.save(Reservation.waiting(유저1, 내일_열한시, 공포));
 
         // when
-        Page<WaitingInfoResponse> result = waitingQueryService.getAllInfo(pageable);
+        Page<WaitingInfoResponse> result = waitingQueryService.getAll(pageable);
 
         List<WaitingInfoResponse> content = result.getContent();
         List<Long> sortedId = content.stream().sorted(Comparator.comparing(WaitingInfoResponse::id))
