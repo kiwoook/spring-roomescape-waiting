@@ -18,7 +18,7 @@ import roomescape.waiting.service.WaitingQueryService;
 import roomescape.waiting.service.WaitingService;
 
 @RestController
-@RequestMapping("/admin/waitings")
+@RequestMapping("/admin/reservations/waitings")
 @RequiredArgsConstructor
 public class WaitingAdminApiController {
 

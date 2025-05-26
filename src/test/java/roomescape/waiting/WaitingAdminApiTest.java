@@ -56,7 +56,7 @@ public class WaitingAdminApiTest {
 
         RestAssured.given().log().all()
                 .cookie("token", StubTokenProvider.ADMIN_STUB_TOKEN)
-                .when().get("/admin/waitings")
+                .when().get("/admin/reservations/waitings")
                 .then().log().all()
                 .statusCode(200)
                 .body("data.totalElements", is(1));
@@ -73,7 +73,7 @@ public class WaitingAdminApiTest {
 
         RestAssured.given().log().all()
                 .cookie("token", StubTokenProvider.ADMIN_STUB_TOKEN)
-                .when().delete("/admin/waitings/" + id)
+                .when().delete("/admin/reservations/waitings/" + id)
                 .then().log().all()
                 .statusCode(204);
     }
