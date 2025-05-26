@@ -12,7 +12,7 @@ import roomescape.global.exception.NotFoundException;
 import roomescape.reservation.controller.response.MyReservationResponse;
 import roomescape.reservation.domain.Reservation;
 import roomescape.reservation.domain.ReservationStatus;
-import roomescape.reservation.dto.ReservationWithRank;
+import roomescape.reservation.dto.WaitingWithRank;
 import roomescape.reservation.repository.ReservationRepository;
 import roomescape.waiting.controller.response.WaitingInfoResponse;
 
@@ -29,11 +29,11 @@ public class WaitingQueryService {
                 .map(WaitingInfoResponse::from);
     }
 
-    public List<MyReservationResponse> getMyWaitingReservations(Long memberId) {
+    public List<MyReservationResponse> getMyWaitings(Long memberId) {
         List<Reservation> myWaitings = reservationRepository.findByMemberIdAndStatus(memberId, WAITING);
 
-        List<ReservationWithRank> responses = myWaitings.stream()
-                .map(this::calculateRankForReservation)
+        List<WaitingWithRank> responses = myWaitings.stream()
+                .map(this::calculateRankForWaiting)
                 .toList();
 
         return responses.stream()
@@ -41,7 +41,7 @@ public class WaitingQueryService {
                 .toList();
     }
 
-    private ReservationWithRank calculateRankForReservation(Reservation myWaiting) {
+    private WaitingWithRank calculateRankForWaiting(Reservation myWaiting) {
         List<Reservation> waitings = reservationRepository.findByDateAndTimeIdAndStatus(
                 myWaiting.getDate(), myWaiting.getTimeId(), WAITING);
 
@@ -50,7 +50,7 @@ public class WaitingQueryService {
         for (int i = 0; i < waitings.size(); i++) {
             Reservation waiting = waitings.get(i);
             if (waiting.getId().equals(myWaiting.getId())) {
-                return new ReservationWithRank(waiting, i + 1);
+                return new WaitingWithRank(waiting, i + 1);
             }
         }
 
